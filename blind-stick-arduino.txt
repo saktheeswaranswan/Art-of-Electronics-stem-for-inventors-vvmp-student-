@@ -1,0 +1,42 @@
+#define ECHO_PIN  A0    // Echo pin of HC-SR04
+#define TRIG_PIN  A1    // Trigger pin of HC-SR04
+#define BUZZER_PIN 7    // Buzzer connected to pin 7 on Arduino
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  digitalWrite(BUZZER_PIN, LOW); // Buzzer off initially
+}
+
+void loop() {
+  long duration;
+  float distance;
+
+  // Send trigger pulse
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // Measure echo pulse duration
+  duration = pulseIn(ECHO_PIN, HIGH);
+
+  // Convert to distance in cm
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // If someone is within 80 cm, turn buzzer ON
+  if (distance <= 100) {
+    digitalWrite(BUZZER_PIN, HIGH); // keep buzzer ON
+  } else {
+    digitalWrite(BUZZER_PIN, LOW); // turn buzzer OFF
+  }
+
+  delay(200); // small delay to avoid flickering
+}
